@@ -10,264 +10,89 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- আধুনিক CSS ভেরিয়েবল এবং রিসেট --- */
-        :root {
-            --primary: #4e54c8;
-            --primary-dark: #8f94fb;
-            --bg: #f4f7f6;
-            --text: #333;
-            --white: #fff;
-            --shadow: 0 10px 25px rgba(0,0,0,0.05);
-            --transition: all 0.3s ease;
-        }
-
+        :root { --primary: #4e54c8; --primary-dark: #8f94fb; --bg: #f4f7f6; --white: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        
-        body { 
-            background: var(--bg); 
-            background: linear-gradient(to right, #8f94fb, #4e54c8);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+        body { background: linear-gradient(to right, #8f94fb, #4e54c8); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 15px; }
 
-        /* --- মেইন কন্টেইনার (গ্লাস-মর্ফিজম স্টাইল) --- */
-        .container { 
-            width: 100%;
-            max-width: 900px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
-        }
+        .container { width: 100%; max-width: 600px; background: rgba(255, 255, 255, 0.98); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- অ্যানিমেশন --- */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .active-section { animation: fadeIn 0.5s ease; }
+        h2 { color: var(--primary); text-align: center; margin-bottom: 20px; font-weight: 700; }
+        input, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 2px solid #eee; font-size: 1rem; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; background: #fff; }
 
-        /* --- হেডার এবং টাইটেল --- */
-        .header { text-align: center; margin-bottom: 30px; }
-        h2 { color: var(--primary); font-weight: 700; font-size: 2rem; margin-bottom: 10px; }
-        p.subtitle { color: #666; font-size: 1rem; }
-
-        /* --- ইনপুট এবং বোতাম --- */
-        .form-group { margin-bottom: 20px; position: relative; }
-        .form-group i { position: absolute; left: 15px; top: 15px; color: #aaa; transition: var(--transition); }
-        
-        input, textarea { 
-            width: 100%; 
-            padding: 15px 15px 15px 45px; 
-            border-radius: 10px; 
-            border: 2px solid #eee; 
-            background: #fcfcfc;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        
-        input:focus, textarea:focus { border-color: var(--primary); background: var(--white); outline: none; box-shadow: 0 0 10px rgba(78,84,200,0.1); }
-        input:focus + i, textarea:focus + i { color: var(--primary); }
-
-        textarea { padding-left: 15px; resize: vertical; }
-
-        .btn { 
-            width: 100%; 
-            padding: 15px; 
-            border-radius: 10px; 
-            border: none; 
-            font-weight: 600; 
-            font-size: 1rem;
-            cursor: pointer; 
-            transition: var(--transition); 
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        
-        .btn-primary { background: linear-gradient(45deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 5px 15px rgba(78,84,200,0.2); }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(78,84,200,0.3); }
-        
-        .btn-secondary { background: #e0e0e0; color: #555; }
-        .btn-secondary:hover { background: #d0d0d0; }
-        
-        .btn-danger { background: #ff4757; color: white; }
-        .btn-danger:hover { background: #ff6b81; }
-
+        .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+        .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: #2ed573; color: white; }
-        .btn-success:hover { background: #26af61; }
+        .btn-danger { background: #ff4757; color: white; }
+        .btn-secondary { background: #e0e0e0; color: #555; }
 
-        .link-text { color: var(--primary); cursor: pointer; text-align: center; font-size: 0.9rem; margin-top: 15px; display: block; font-weight: 500; }
-        .link-text:hover { text-decoration: underline; }
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .dash-card { background: #f8f9fa; padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid #eee; }
+        .dash-card:hover { border-color: var(--primary); transform: translateY(-3px); background: #fff; }
+        .dash-card i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
 
-        /* --- ড্যাশবোর্ড গ্রিড --- */
-        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; }
-        .dash-card { 
-            background: var(--white); 
-            padding: 30px; 
-            border-radius: 15px; 
-            text-align: center; 
-            cursor: pointer; 
-            box-shadow: var(--shadow); 
-            transition: var(--transition); 
-            border: 2px solid transparent; 
-        }
-        .dash-card:hover { border-color: var(--primary-dark); transform: translateY(-5px); }
-        .dash-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 15px; }
-        .dash-card h4 { font-weight: 600; color: var(--text); }
-
-        /* --- লিস্ট স্টাইল --- */
-        #display-list { margin-top: 20px; max-height: 300px; overflow-y: auto; padding-right: 10px; }
-        .list-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: var(--white); 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            border-radius: 10px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
-            transition: var(--transition);
-        }
-        .list-item:hover { box-shadow: var(--shadow); }
-        .contact-info { display: flex; flex-direction: column; }
-        .contact-name { font-weight: 600; color: var(--text); }
-        .contact-email { font-size: 0.85rem; color: #777; }
-        .del-btn { width: auto; padding: 8px 12px; font-size: 0.8rem; border-radius: 8px; }
-
-        /* --- রেসপনসিভ --- */
-        @media (max-width: 600px) { .container { padding: 25px; } h2 { font-size: 1.5rem; } }
-        
         .hidden { display: none; }
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; padding-bottom: 10px; border-bottom: 2px solid #eee; }
-        .back-btn { width: auto; padding: 8px 15px; font-size: 0.9rem; border-radius: 8px; }
-
-        /* --- লোডিং স্পিনার --- */
-        .spinner { display: none; border: 4px solid rgba(0,0,0,0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: var(--primary); animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .btn.loading .spinner { display: block; margin-right: 10px; }
-        .btn.loading span { display: none; }
-
+        .list-item { display: flex; justify-content: space-between; align-items: center; background: #fdfdfd; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #eee; }
+        .del-btn { background: #ff4757; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="container active-section">
+<div class="container">
     <div id="auth-div">
-        <div class="header">
-            <h2>Ad-SMS Pro</h2>
-            <p class="subtitle" id="auth-subtitle">মার্কেটিং টুল এ লগইন করুন</p>
-        }
-        </div>
-        <div class="form-group">
-            <input type="email" id="u-email" placeholder="আপনার জিমেইল">
-            <i class="fas fa-envelope"></i>
-        </div>
-        <div class="form-group">
-            <input type="password" id="u-pass" placeholder="পাসওয়ার্ড">
-            <i class="fas fa-lock"></i>
-        </div>
-        <button class="btn btn-primary" id="login-btn" onclick="login()">
-            <div class="spinner"></div><span><i class="fas fa-sign-in-alt"></i> লগইন</span>
-        </button>
-        <button class="btn btn-secondary" style="margin-top: 10px;" onclick="signup()">
-            <i class="fas fa-user-plus"></i> রেজিস্ট্রেশন
-        </button>
-        <span class="link-text" onclick="forgotPass()">পাসওয়ার্ড ভুলে গেছেন?</span>
+        <h2>Ad-SMS Pro</h2>
+        <input type="email" id="u-email" placeholder="আপনার জিমেইল">
+        <input type="password" id="u-pass" placeholder="পাসওয়ার্ড">
+        <button class="btn btn-primary" onclick="login()"><i class="fas fa-sign-in-alt"></i> লগইন</button>
+        <button class="btn btn-secondary" onclick="signup()"><i class="fas fa-user-plus"></i> রেজিস্ট্রেশন</button>
+        <p onclick="forgotPass()" style="text-align:center; color:blue; cursor:pointer; margin-top:15px; font-size:14px;">পাসওয়ার্ড ভুলে গেছেন?</p>
     </div>
 
-    <div id="dash-div" class="hidden section">
-        <div class="header">
-            <h2>স্বাগতম ড্যাশবোর্ডে</h2>
-            <p class="subtitle">আপনার কাজ বেছে নিন</p>
-        </div>
+    <div id="dash-div" class="hidden">
+        <h2>ড্যাশবোর্ড</h2>
         <div class="dash-grid">
-            <div class="dash-card" onclick="show('list-div')">
-                <i class="fas fa-address-book"></i>
-                <h4>জিমেইল লিস্ট</h4>
-            </div>
-            <div class="dash-card" onclick="show('msg-div')">
-                <i class="fas fa-paper-plane"></i>
-                <h4>SMS/মেসেজ পাঠান</h4>
-            </div>
-            <div class="dash-card" onclick="show('sett-div')">
-                <i class="fas fa-cog"></i>
-                <h4>সেটিংস</h4>
-            </div>
-            <div class="dash-card" style="border-color: #ffcccc;" onclick="logout()">
-                <i class="fas fa-sign-out-alt" style="color: #ff4757;"></i>
-                <h4 style="color: #ff4757;">লগআউট</h4>
-            </div>
+            <div class="dash-card" onclick="show('list-div')"><i class="fas fa-list"></i><br>জিমেইল লিস্ট</div>
+            <div class="dash-card" onclick="show('msg-div')"><i class="fas fa-paper-plane"></i><br>SMS পাঠান</div>
+            <div class="dash-card" onclick="show('sett-div')"><i class="fas fa-cog"></i><br>সেটিংস</div>
+            <div class="dash-card" onclick="logout()"><i class="fas fa-power-off"></i><br>লগআউট</div>
         </div>
     </div>
 
-    <div id="list-div" class="hidden section">
-        <div class="section-header">
-            <h3><i class="fas fa-address-book" style="color:var(--primary)"></i> জিমেইল লিস্ট</h3>
-            <button class="btn btn-secondary back-btn" onclick="show('dash-div')"><i class="fas fa-arrow-left"></i></button>
-        </div>
-        
-        <div id="display-list">
-            <p style="text-align:center; color:#999; padding:20px;">কোনো কন্টাক্ট সেভ করা নেই।</p>
-        </div>
-        
-        <div class="header" style="margin-top: 30px; text-align: left; margin-bottom: 15px;">
-            <h4>নতুন কন্টাক্ট যোগ করুন</h4>
-        </div>
-        <div class="dash-grid" style="grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="form-group" style="margin-bottom:0">
-                <input type="text" id="c-name" placeholder="নাম">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-                <input type="email" id="c-mail" placeholder="জিমেইল">
-                <i class="fas fa-envelope"></i>
-            </div>
-        </div>
-        <button class="btn btn-success" style="margin-top: 15px;" onclick="addContact()">
-            <i class="fas fa-plus-circle"></i> লিস্টে সেভ করুন
-        </button>
+    <div id="list-div" class="hidden">
+        <h3><i class="fas fa-users"></i> জিমেইল লিস্ট</h3>
+        <div id="display-list" style="max-height: 250px; overflow-y: auto; margin: 15px 0;"></div>
+        <input type="text" id="c-name" placeholder="নাম">
+        <input type="email" id="c-mail" placeholder="জিমেইল">
+        <button class="btn btn-success" onclick="addContact()">সেভ করুন</button>
+        <button class="btn btn-secondary" onclick="show('dash-div')">পিছনে যান</button>
     </div>
 
-    <div id="msg-div" class="hidden section">
-        <div class="section-header">
-            <h3><i class="fas fa-paper-plane" style="color:var(--primary)"></i> মেসেজ বক্স</h3>
-            <button class="btn btn-secondary back-btn" onclick="show('dash-div')"><i class="fas fa-arrow-left"></i></button>
-        </div>
-        <div class="form-group">
-            <textarea id="msg-body" rows="8" placeholder="আপনার Adstara লিঙ্কসহ মেসেজ লিখুন..."></textarea>
-        </div>
-        <button class="btn btn-primary" id="send-btn" onclick="sendGroupMail()">
-            <div class="spinner"></div><span><i class="fas fa-mail-bulk"></i> সব জিমেইলে পাঠান</span>
-        </button>
+    <div id="msg-div" class="hidden">
+        <h3><i class="fas fa-envelope-open-text"></i> মেসেজ বক্স</h3>
+        <textarea id="msg-body" rows="6" placeholder="আপনার মেসেজ ও Adstara লিংক এখানে লিখুন..."></textarea>
+        <button class="btn btn-primary" onclick="sendGroupMail()">সব জিমেইলে পাঠান</button>
+        <button class="btn btn-secondary" onclick="show('dash-div')">পিছনে যান</button>
     </div>
 
-    <div id="sett-div" class="hidden section">
-        <div class="section-header">
-            <h3><i class="fas fa-cog" style="color:var(--primary)"></i> সেটিংস</h3>
-            <button class="btn btn-secondary back-btn" onclick="show('dash-div')"><i class="fas fa-arrow-left"></i></button>
-        </div>
-        <div class="dash-card" style="cursor: default; text-align: left; background: #f9f9f9;">
-            <i class="fas fa-key" style="font-size: 1.5rem;"></i>
-            <h4 style="margin-bottom: 10px;">পাসওয়ার্ড পরিবর্তন</h4>
-            <p style="font-size: 0.9rem; color:#666; margin-bottom: 15px;">নিচের বোতামে ক্লিক করলে আপনার রেজিস্টার্ড জিমেইলে একটি পাসওয়ার্ড রিসেট লিঙ্ক পাঠানো হবে।</p>
-            <button class="btn btn-danger del-btn" onclick="forgotPass()">রিসেট লিঙ্ক পাঠান</button>
-        </div>
+    <div id="sett-div" class="hidden">
+        <h3>সেটিংস</h3>
+        <p style="margin: 15px 0; color: #666;">পাসওয়ার্ড পরিবর্তন করতে নিচে ক্লিক করুন:</p>
+        <button class="btn btn-danger" onclick="forgotPass()">রিসেট লিংক পাঠান</button>
+        <button class="btn btn-secondary" onclick="show('dash-div')">পিছনে যান</button>
     </div>
 </div>
 
 <script>
-    // --- Firebase Configuration (আপনার দেওয়া) ---
+    // ফায়ারবেজ সেটআপ (সংশোধিত)
     const firebaseConfig = {
         apiKey: "AIzaSyC8NEgB7dsgINyvioNcC65WvC78pEkmXrw",
         authDomain: "ad-sms.firebaseapp.com",
         projectId: "ad-sms",
-        databaseURL: "https://ad-sms-default-rtdb.firebaseio.com", // আমি ঠিক করে দিয়েছি
+        databaseURL: "https://ad-sms-default-rtdb.firebaseio.com",
         storageBucket: "ad-sms.firebasestorage.app",
         messagingSenderId: "162639397700",
         appId: "1:162639397700:web:f9983216ba2731dcabcd11"
@@ -276,147 +101,61 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // --- EmailJS Configuration (আপনার দেওয়া) ---
-    emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // <<< আপনার EmailJS Public Key এখানে দিন >>>
-    const emailServiceId = "Service_76dt1bu";
+    // EmailJS সেটআপ (আপনার পাবলিক কি দিন)
+    emailjs.init("YOUR_PUBLIC_KEY"); 
 
-    // --- Auth Functions ---
     function signup() {
-        let email = getV('u-email');
-        let pass = getV('u-pass');
-        if(!email || !pass) { alert("জিমেইল এবং পাসওয়ার্ড দিন।"); return; }
-        
-        auth.createUserWithEmailAndPassword(email, pass)
-        .then(() => alert("রেজিস্ট্রেশন সফল হয়েছে! এখন লগইন করুন।"))
-        .catch(e => alert("ভুল: " + e.message));
+        auth.createUserWithEmailAndPassword(v('u-email'), v('u-pass')).then(()=>alert("সফল!")).catch(e=>alert(e.message));
     }
-
     function login() {
-        let email = getV('u-email');
-        let pass = getV('u-pass');
-        if(!email || !pass) { alert("জিমেইল এবং পাসওয়ার্ড দিন।"); return; }
-        
-        setLoading('login-btn', true);
-        auth.signInWithEmailAndPassword(email, pass)
-        .then(() => {
-            show('dash-div');
-            loadContacts();
-        })
-        .catch(e => alert("লগইন ভুল: " + e.message))
-        .finally(() => setLoading('login-btn', false));
+        auth.signInWithEmailAndPassword(v('u-email'), v('u-pass')).then(()=>{ show('dash-div'); loadContacts(); }).catch(e=>alert("ভুল তথ্য!"));
     }
-
-    function logout() { 
-        if(confirm("লগআউট করবেন?")) auth.signOut().then(() => location.reload()); 
-    }
-
+    function logout() { auth.signOut().then(()=>location.reload()); }
     function forgotPass() {
-        let email = getV('u-email') || prompt("আপনার জিমেইলটি দিন:");
-        if(email) {
-            auth.sendPasswordResetEmail(email)
-            .then(() => alert("আপনার জিমেইলে পাসওয়ার্ড রিসেট লিঙ্ক পাঠানো হয়েছে। চেক করুন।"))
-            .catch(e => alert("ভুল: " + e.message));
+        let em = v('u-email') || prompt("জিমেইল দিন:");
+        if(em) auth.sendPasswordResetEmail(em).then(()=>alert("লিংক পাঠানো হয়েছে।"));
+    }
+
+    function show(id) {
+        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function v(id) { return document.getElementById(id).value; }
+
+    function addContact() {
+        let name = v('c-name'), mail = v('c-mail');
+        if(name && mail) {
+            db.ref('list/' + auth.currentUser.uid).push({ name, email: mail });
+            document.getElementById('c-name').value = '';
+            document.getElementById('c-mail').value = '';
         }
     }
 
-    // --- UI & Navigation ---
-    function show(id) {
-        // সেকশন হাইড/শো
-        document.querySelectorAll('.container > div.section, #auth-div').forEach(d => d.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-        
-        // অ্যানিমেশন রিস্টার্ট
-        let container = document.querySelector('.container');
-        container.classList.remove('active-section');
-        void container.offsetWidth; // রেন্ডার ট্রিক
-        container.classList.add('active-section');
-    }
-    
-    function getV(id) { return document.getElementById(id).value.trim(); }
-    
-    function setLoading(btnId, isLoading) {
-        let btn = document.getElementById(btnId);
-        if(isLoading) btn.classList.add('loading');
-        else btn.classList.remove('loading');
-    }
-
-    // --- List Management ---
-    function addContact() {
-        let name = getV('c-name');
-        let email = getV('c-mail');
-        if(!name || !email) { alert("নাম এবং জিমেইল দুটোই দিন।"); return; }
-        
-        let uid = auth.currentUser.uid;
-        db.ref('list/' + uid).push({ name: name, email: email })
-        .then(() => {
-            document.getElementById('c-name').value = '';
-            document.getElementById('c-mail').value = '';
-            // alert("কন্টাক্ট সেভ হয়েছে");
-        });
-    }
-
     function loadContacts() {
-        let uid = auth.currentUser.uid;
-        let div = document.getElementById('display-list');
-        
-        db.ref('list/' + uid).on('value', s => {
+        db.ref('list/' + auth.currentUser.uid).on('value', s => {
+            let div = document.getElementById('display-list');
             div.innerHTML = '';
-            if(!s.exists()) {
-                div.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">কোনো কন্টাক্ট সেভ করা নেই।</p>';
-                return;
-            }
             s.forEach(c => {
-                let data = c.val();
-                div.innerHTML += `
-                    <div class="list-item">
-                        <div class="contact-info">
-                            <span class="contact-name">${data.name}</span>
-                            <span class="contact-email">${data.email}</span>
-                        </div>
-                        <button class="btn btn-danger del-btn" onclick="del('${c.key}')"><i class="fas fa-trash"></i></button>
-                    </div>`;
+                div.innerHTML += `<div class="list-item">
+                    <span><b>${c.val().name}</b><br>${c.val().email}</span>
+                    <button class="del-btn" onclick="del('${c.key}')">মুছুন</button>
+                </div>`;
             });
         });
     }
+    function del(k) { if(confirm("মুছবেন?")) db.ref('list/'+auth.currentUser.uid+'/'+k).remove(); }
 
-    function del(key) { 
-        if(confirm("এই কন্টাক্টটি মুছে ফেলবেন?")) {
-            let uid = auth.currentUser.uid;
-            db.ref('list/' + uid + '/' + key).remove();
-        } 
-    }
-
-    // --- Send Group Emails ---
     function sendGroupMail() {
-        let msg = getV('msg-body');
-        if(!msg) { alert("মেসেজ খালি!"); return; }
-        
-        let uid = auth.currentUser.uid;
-        setLoading('send-btn', true);
-        
-        db.ref('list/' + uid).once('value', s => {
-            if(!s.exists()) { alert("আপনার লিস্টে কোনো জিমেইল নেই!"); setLoading('send-btn', false); return; }
-            
-            let promises = [];
+        let msg = v('msg-body');
+        if(!msg) return alert("মেসেজ লিখুন!");
+        db.ref('list/' + auth.currentUser.uid).once('value', s => {
             s.forEach(c => {
-                let emailPromise = emailjs.send(emailServiceId, "YOUR_TEMPLATE_ID", {
+                emailjs.send("Service_76dt1bu", "YOUR_TEMPLATE_ID", {
                     to_email: c.val().email,
-                    to_name: c.val().name,
                     message: msg
                 });
-                promises.push(emailPromise);
             });
-
-            Promise.all(promises)
-            .then(() => {
-                alert("সবাইকে মেসেজ পাঠানো হয়েছে!");
-                document.getElementById('msg-body').value = '';
-            })
-            .catch(e => {
-                console.error("EmailJS Error:", e);
-                alert("মেসেজ পাঠাতে সমস্যা হয়েছে। EmailJS সেটআপ চেক করুন।");
-            })
-            .finally(() => setLoading('send-btn', false));
+            alert("সবাইকে পাঠানো হয়েছে!");
         });
     }
 </script>

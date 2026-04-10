@@ -3,80 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ad-SMS Pro | Marketing Tool</title>
+    <title>Ad-SMS Pro | Advanced Marketing Tool</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --primary: #4e54c8; --secondary: #28a745; --danger: #dc3545; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
-        .box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        h2 { color: var(--primary); text-align: center; margin-bottom: 20px; font-size: 24px; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; }
-        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 5px; color: white; }
-        .btn-p { background: var(--primary); }
-        .btn-s { background: var(--secondary); }
-        .btn-d { background: var(--danger); }
-        .btn-back { background: #6c757d; margin-top: 10px; }
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h2 { text-align: center; margin-bottom: 25px; font-size: 28px; font-weight: 700; letter-spacing: -1px; }
+        h2 span { color: var(--primary); }
+
+        .input-group { margin-bottom: 15px; }
+        input, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; background: #1e293b; }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-p { background: var(--primary); color: white; }
+        .btn-p:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-s { background: var(--success); color: white; }
+        .btn-d { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+        .btn-back { background: #475569; color: white; margin-top: 20px; }
+
         .hidden { display: none; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .card { background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid #eee; }
-        .list-item { display: flex; justify-content: space-between; background: #f9f9f9; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 4px solid var(--primary); font-size: 13px; }
+
+        /* Dashboard Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
+        .card-btn {
+            background: #334155;
+            padding: 25px 15px;
+            border-radius: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .card-btn:hover { background: #475569; border-color: var(--primary); transform: scale(1.03); }
+        .card-btn i { font-size: 28px; color: var(--primary); margin-bottom: 12px; }
+
+        /* Contact List */
+        .list-container { max-height: 250px; overflow-y: auto; margin-bottom: 20px; }
+        .list-item {
+            background: #334155;
+            padding: 12px 18px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .list-item span { font-size: 14px; font-weight: 500; }
+        .del-icon { color: var(--danger); cursor: pointer; padding: 5px; }
+
+        .footer-link { text-align: center; margin-top: 20px; font-size: 14px; color: #94a3b8; }
+        .footer-link span { color: var(--primary); cursor: pointer; font-weight: 600; }
     </style>
 </head>
 <body>
 
-<div class="box">
+<div class="main-card">
     <div id="auth-section">
-        <h2>Ad-SMS Pro</h2>
-        <input type="email" id="u-email" placeholder="আপনার জিমেইল">
-        <input type="password" id="u-pass" placeholder="পাসওয়ার্ড">
-        <button class="btn btn-p" onclick="login()">লগইন</button>
-        <button class="btn btn-s" onclick="signup()">রেজিস্ট্রেশন করুন</button>
-        <p onclick="forgotPass()" style="text-align:center; color:blue; cursor:pointer; margin-top:15px; font-size:13px;">পাসওয়ার্ড ভুলে গেছেন?</p>
+        <h2 id="auth-title">Ad-SMS <span>Pro</span></h2>
+        <div class="input-group">
+            <input type="email" id="u-email" placeholder="আপনার ইমেইল">
+        </div>
+        <div class="input-group">
+            <input type="password" id="u-pass" placeholder="পাসওয়ার্ড">
+        </div>
+        <button id="login-btn" class="btn btn-p" onclick="login()"><i class="fas fa-sign-in-alt"></i> লগইন করুন</button>
+        <button id="signup-btn" class="btn btn-s hidden" onclick="signup()"><i class="fas fa-user-plus"></i> রেজিস্ট্রেশন করুন</button>
+        
+        <div class="footer-link">
+            <p id="toggle-text">একাউন্ট নেই? <span onclick="toggleAuth(true)">তৈরি করুন</span></p>
+            <p onclick="forgotPass()" style="margin-top: 10px; color: #ef4444; font-size: 13px;">পাসওয়ার্ড ভুলে গেছেন?</p>
+        </div>
     </div>
 
     <div id="dash-section" class="hidden">
-        <h2>ড্যাশবোর্ড</h2>
+        <h2>Ad-SMS <span>Panel</span></h2>
         <div class="grid">
-            <div class="card" onclick="showSection('list-section')"><i class="fas fa-users"></i><br>জিমেইল লিস্ট</div>
-            <div class="card" onclick="showSection('msg-section')"><i class="fas fa-paper-plane"></i><br>SMS পাঠান</div>
-            <div class="card" onclick="showSection('sett-section')"><i class="fas fa-cog"></i><br>সেটিংস</div>
-            <div class="card" onclick="logout()" style="color:red;"><i class="fas fa-sign-out-alt"></i><br>লগআউট</div>
+            <div class="card-btn" onclick="showSection('list-section')">
+                <i class="fas fa-users"></i><br>জিমেইল লিস্ট
+            </div>
+            <div class="card-btn" onclick="showSection('msg-section')">
+                <i class="fas fa-paper-plane"></i><br>মেসেজ পাঠান
+            </div>
+            <div class="card-btn" onclick="showSection('sett-section')">
+                <i class="fas fa-cog"></i><br>সেটিংস
+            </div>
+            <div class="card-btn" onclick="logout()">
+                <i class="fas fa-power-off" style="color: #f87171;"></i><br>লগআউট
+            </div>
         </div>
     </div>
 
     <div id="list-section" class="hidden">
         <h3>জিমেইল লিস্ট</h3>
-        <div id="contact-display" style="max-height: 180px; overflow-y: auto; margin-bottom: 10px;"></div>
-        <input type="text" id="c-name" placeholder="নাম">
-        <input type="email" id="c-email" placeholder="জিমেইল আইডি">
-        <button class="btn btn-s" onclick="saveContact()">সেভ করুন</button>
-        <button class="btn btn-back" onclick="showSection('dash-section')">ফিরে যান</button>
+        <div class="list-container" id="contact-display"></div>
+        <input type="text" id="c-name" placeholder="নাম" style="margin-bottom: 8px;">
+        <input type="email" id="c-email" placeholder="জিমেইল এড্রেস">
+        <button class="btn btn-s" onclick="saveContact()"><i class="fas fa-plus"></i> লিস্টে যোগ করুন</button>
+        <button class="btn btn-back" onclick="showSection('dash-section')">পিছনে যান</button>
     </div>
 
     <div id="msg-section" class="hidden">
-        <h3>মেসেজ বক্স</h3>
-        <textarea id="msg-content" rows="6" placeholder="আপনার SMS বা Adstara লিংক..."></textarea>
-        <button class="btn btn-p" onclick="sendToAll()">সব জিমেইলে পাঠান</button>
-        <button class="btn btn-back" onclick="showSection('dash-section')">ফিরে যান</button>
+        <h3>মেসেজ লিখুন</h3>
+        <textarea id="msg-content" rows="7" placeholder="আপনার Adstara লিঙ্কসহ মেসেজটি এখানে টাইপ করুন..."></textarea>
+        <button class="btn btn-p" onclick="sendToAll()"><i class="fas fa-paper-plane"></i> সব জিমেইলে পাঠান</button>
+        <button class="btn btn-back" onclick="showSection('dash-section')">পিছনে যান</button>
     </div>
 
     <div id="sett-section" class="hidden">
         <h3>সেটিংস</h3>
-        <p style="font-size: 13px; color: #666; margin: 10px 0;">পাসওয়ার্ড পরিবর্তন করতে চান? আপনার মেইলে লিঙ্ক যাবে।</p>
-        <button class="btn btn-d" onclick="forgotPass()">পাসওয়ার্ড রিসেট করুন</button>
-        <button class="btn btn-back" onclick="showSection('dash-section')">ফিরে যান</button>
+        <div style="background: #334155; padding: 20px; border-radius: 15px; margin-top: 20px;">
+            <p style="font-size: 14px; margin-bottom: 15px; line-height: 1.5;">পাসওয়ার্ড পরিবর্তন করতে চান? নিচের বাটনে ক্লিক করলে আপনার মেইলে লিঙ্ক যাবে।</p>
+            <button class="btn btn-d" onclick="forgotPass()">পাসওয়ার্ড রিসেট করুন</button>
+        </div>
+        <button class="btn btn-back" onclick="showSection('dash-section')">পিছনে যান</button>
     </div>
 </div>
 
 <script>
-    // ফায়ারবেজ কনফিগ
+    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyC8NEgB7dsgINyvioNcC65WvC78pEkmXrw",
         authDomain: "ad-sms.firebaseapp.com",
@@ -90,36 +194,45 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // EmailJS - আপনার তথ্য অনুযায়ী আপডেট করা হয়েছে
+    // EmailJS Configuration
     emailjs.init("mjx-F2TmBPxlLfsD72229");
+
+    // UI & Auth Functions
+    function toggleAuth(isSignup) {
+        document.getElementById('login-btn').classList.toggle('hidden', isSignup);
+        document.getElementById('signup-btn').classList.toggle('hidden', !isSignup);
+        document.getElementById('toggle-text').innerHTML = isSignup ? 
+            'একাউন্ট আছে? <span onclick="toggleAuth(false)">লগইন করুন</span>' : 
+            'একাউন্ট নেই? <span onclick="toggleAuth(true)">তৈরি করুন</span>';
+    }
 
     function signup() {
         auth.createUserWithEmailAndPassword(v('u-email'), v('u-pass'))
         .then(() => alert("রেজিস্ট্রেশন সফল! এখন লগইন করুন।"))
-        .catch(e => alert("ভুল: " + e.message));
+        .catch(e => alert(e.message));
     }
 
     function login() {
         auth.signInWithEmailAndPassword(v('u-email'), v('u-pass'))
         .then(() => { showSection('dash-section'); loadContacts(); })
-        .catch(e => alert("লগইন হয়নি! ইমেইল ও পাসওয়ার্ড চেক করুন।"));
-    }
-
-    function forgotPass() {
-        let email = v('u-email') || prompt("আপনার জিমেইল দিন:");
-        if(email) auth.sendPasswordResetEmail(email)
-        .then(() => alert("পাসওয়ার্ড রিসেট লিঙ্ক আপনার মেইলে পাঠানো হয়েছে (Spam চেক করুন)।"))
-        .catch(e => alert(e.message));
+        .catch(e => alert("ভুল তথ্য অথবা একাউন্ট নেই!"));
     }
 
     function logout() { auth.signOut().then(() => location.reload()); }
 
+    function forgotPass() {
+        let email = v('u-email') || prompt("আপনার জিমেইল এড্রেস দিন:");
+        if(email) auth.sendPasswordResetEmail(email).then(() => alert("পাসওয়ার্ড রিসেট লিঙ্ক আপনার মেইলে পাঠানো হয়েছে।"));
+    }
+
+    // Navigation
     function showSection(id) {
-        document.querySelectorAll('.box > div').forEach(d => d.classList.add('hidden'));
+        document.querySelectorAll('.main-card > div').forEach(d => d.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
     }
     function v(id) { return document.getElementById(id).value; }
 
+    // Database
     function saveContact() {
         let name = v('c-name'), email = v('c-email');
         if(name && email) {
@@ -134,30 +247,34 @@
             let listDiv = document.getElementById('contact-display');
             listDiv.innerHTML = '';
             s.forEach(child => {
-                listDiv.innerHTML += `<div class="list-item">
-                    <span>${child.val().name} (${child.val().email})</span>
-                    <button style="color:red; border:none; background:none;" onclick="del('${child.key}')"><i class="fas fa-trash"></i></button>
-                </div>`;
+                listDiv.innerHTML += `
+                    <div class="list-item">
+                        <span>${child.val().name} (${child.val().email})</span>
+                        <i class="fas fa-trash-alt del-icon" onclick="deleteContact('${child.key}')"></i>
+                    </div>`;
             });
         });
     }
 
-    function del(key) { if(confirm("মুছবেন?")) db.ref('contacts/' + auth.currentUser.uid + '/' + key).remove(); }
+    function deleteContact(key) {
+        if(confirm("এটি মুছে ফেলবেন?")) db.ref('contacts/' + auth.currentUser.uid + '/' + key).remove();
+    }
 
+    // Email Sending
     function sendToAll() {
         let msg = v('msg-content');
         if(!msg) return alert("মেসেজ বক্স খালি!");
+        
         db.ref('contacts/' + auth.currentUser.uid).once('value', s => {
-            if(!s.exists()) return alert("লিস্টে কোনো মেইল নেই!");
+            if(!s.exists()) return alert("লিস্টে কোনো কন্টাক্ট নেই!");
             s.forEach(child => {
-                // আপনার টেমপ্লেট আইডি বসানো হয়েছে
                 emailjs.send("service_76dt1bu", "template_jkcu1eb", {
                     to_email: child.val().email,
                     message: msg,
                     name: child.val().name
                 });
             });
-            alert("সবাইকে পাঠানো হয়েছে!");
+            alert("সবাইকে সফলভাবে পাঠানো হয়েছে!");
         });
     }
 </script>
